@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  erp-backend-api:
+    container_name: erp-backend-api
+    image: erp-backend-api
+    build:
+      context: .
+      dockerfile: ./.setup/build/Dockerfile
+      target: development
+    command: npm run start:debug
+    env_file:
+      - .env
+    ports:
+      - 5001:5001
+      - 9230:9229
+    expose:
+      - 5001
+      - 9230
+    networks:
+      - erp-network
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  erp-backend-mongo:
+    image: mongo:5.0.3
+    container_name: erp-backend-mongo
+    volumes:
+      - 'erp-backend-mongo:/data/db:delegated'
+    ports:
+      - '27018:27017'
+    networks:
+      - erp-network
+
+networks:
+  erp-network:
+
+volumes:
+  erp-backend-mongo:
+    driver: local
